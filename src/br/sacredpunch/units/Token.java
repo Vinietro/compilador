@@ -36,4 +36,8 @@ public class Token {
 		//Configurar os atributos
 	}
 	
+	public void printToken() {
+		
+	}
+	
 }
