@@ -8,9 +8,9 @@ import java.io.*;
 
 public class FileLoader extends BufferedReader {
     
-    private long line;
-    private long column;
-    private long lastLineSize;
+    private int line;
+    private int column;
+    private int lastLineSize;
 
     private char lineSeparatorStart;
     
@@ -83,14 +83,14 @@ public class FileLoader extends BufferedReader {
     /**
      * @return the line
      */
-    public long getLine() {
+    public int getLine() {
         return line;
     }
 
     /**
      * @return the column
      */
-    public long getColumn() {
+    public int getColumn() {
         return column;
     }
 

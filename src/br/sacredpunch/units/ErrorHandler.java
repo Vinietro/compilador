@@ -6,7 +6,7 @@ public class ErrorHandler {
 	public static ErrorHandler getInstance() {
 		return instance;
 	}
-	public void printErrorReport() {
-		
+	public void printErrorReport(String erro) {
+		System.out.println(erro);		
 	}
 }
