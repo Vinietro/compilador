@@ -32,12 +32,12 @@ public class Lexico {
 					return new Token(TokenType.EOF, "");
 				}
 		
-				// Descarte de espaços em branco
+				// Descarte de espaï¿½os em branco
 				while (Character.isWhitespace(c)) {
 					c = this.fl.getNextChar();
 				}
 		
-				// Eliminar comentários: {# .. #}
+				// Eliminar comentï¿½rios: {# .. #}
 		
 				lexema.append(c);
 		
@@ -54,13 +54,35 @@ public class Lexico {
 					t.setCol(this.fl.getColumn());
 					return t;
 				case '+':
+					t = new Token(TokenType.ARIT_AS, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					return t;
 				case '-':
 					// Retorna token do tipo ARIT_AS
 					t = new Token(TokenType.ARIT_AS, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
 					return t;
+				case '*':
+					t = new Token(TokenType.ARIT_MD, lexema.toString());
+					t.setLin(this.f1.getLine());
+					t.setCol(this.f1.getColumn());
+					return t;
+				case '/':
+					t = new Token(TokenType.ARIT_MD, lexema.toString());
+					t.setLin(this.f1.getLine());
+					t.setCol(this.f1.getColumn());
+					return t;
 				case '&':
+					t = new Token(TokenType.LOGITC_OP, lexema.toString());
+					t.setLin(this.f1.getLine());
+					t.setCol(this.f1.getColumn());
+					return processaRELOP();
+				case '|':
+					t = new Token(TokenType.LOGITC_OP, lexema.toString());
+					t.setLin(this.f1.getLine);
+					t.setCol(this.f1.getColumn);
 					return processaRELOP();
 				// ...
 		
@@ -70,29 +92,30 @@ public class Lexico {
 					} else if (Character.isDigit(c)) {
 						return processaNUM();
 					} else {					
-						throws new ErroLexicoException();
+						throw new ErroLexicoException();
 					}
 				}
 			} catch (IOException ioe) {
 				// FALLBACK: erro de leitura, imterromper processamento
 				return new Token(TokenType.EOF, "<Mensagem de Erro>");
 			} catch (ErroLexicoException ele) {
-				// Trata o erro léxico (registra)
+				// Trata o erro lï¿½xico (registra)
 				ErrorHandler.getInstance().printErrorReport(ele);
 			}
 		}
 	}
-
+  
 	private Token processaRELOP() {
-
+		return null;
 	}
 
 	private Token processaID() {
-
+		return null;
 	}
 
 	private Token processaNUM() {
-
+		return null;
 	}
+	
 
 }
