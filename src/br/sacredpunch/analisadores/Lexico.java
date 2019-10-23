@@ -15,9 +15,13 @@ public class Lexico {
 	// Define variavel "lexema"
 	private StringBuilder lexema = new StringBuilder();
 
-	public Lexico(String filename) throws FileNotFoundException {
+	
+	
+	public void getFileName(String filename) throws FileNotFoundException {
 		this.fl = new FileLoader(filename);
 	}
+	
+	
 
 	public Token nextToken() throws IOException {
 		while(true) {
@@ -66,23 +70,23 @@ public class Lexico {
 					return t;
 				case '*':
 					t = new Token(TokenType.ARIT_MD, lexema.toString());
-					t.setLin(this.f1.getLine());
-					t.setCol(this.f1.getColumn());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
 					return t;
 				case '/':
 					t = new Token(TokenType.ARIT_MD, lexema.toString());
-					t.setLin(this.f1.getLine());
-					t.setCol(this.f1.getColumn());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
 					return t;
 				case '&':
-					t = new Token(TokenType.LOGITC_OP, lexema.toString());
-					t.setLin(this.f1.getLine());
-					t.setCol(this.f1.getColumn());
+					t = new Token(TokenType.LOGIC_OP, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
 					return processaRELOP();
 				case '|':
-					t = new Token(TokenType.LOGITC_OP, lexema.toString());
-					t.setLin(this.f1.getLine);
-					t.setCol(this.f1.getColumn);
+					t = new Token(TokenType.LOGIC_OP, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
 					return processaRELOP();
 				// ...
 		
