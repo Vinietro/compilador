@@ -6,6 +6,7 @@ public class Token {
 	private int lin;
 	private int col;
 	
+	
 	private TokenType tokenType;
 	public TokenType getTokenType() {
 		return tokenType;
@@ -33,11 +34,13 @@ public class Token {
 	}
 	
 	public Token(TokenType tType, String lexema) {
-		//Configurar os atributos
+		
+		setTokenType(tType);
+		setLexema(lexema);
+		
 	}
 	
 	public void printToken() {
-		
 	}
 	
 }

@@ -20,8 +20,8 @@ public class TabSimbolos {
 		tabela.put("verdadeiro", new Token(TokenType.LOGIC_VAL, "verdadeiro"));	
 		tabela.put("falso", new Token(TokenType.LOGIC_VAL, "falso"));	
 		tabela.put("nao", new Token(TokenType.LOGIC_OP, "nao"));	
-		tabela.put("e", new Token(TokenType.LOGIC_OP, "e"));
-		tabela.put("ou", new Token(TokenType.LOGIC_OP, "ou"));
+		tabela.put("end", new Token(TokenType.LOGIC_OP, "end"));
+		tabela.put("or", new Token(TokenType.LOGIC_OP, "or"));
 		tabela.put("bool", new Token(TokenType.TYPE, "bool"));
 		tabela.put("text", new Token(TokenType.TYPE, "text"));
 		tabela.put("int", new Token(TokenType.TYPE, "int"));

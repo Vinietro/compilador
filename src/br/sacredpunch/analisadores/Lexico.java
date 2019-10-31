@@ -21,7 +21,9 @@ public class Lexico {
 		this.fl = new FileLoader(filename);
 	}
 	
-	
+	public FileLoader setFile() {
+		return this.fl;
+	}
 
 	public Token nextToken() throws IOException {
 		while(true) {
@@ -78,16 +80,31 @@ public class Lexico {
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
 					return t;
-				case '&':
+				case 'e':
 					t = new Token(TokenType.LOGIC_OP, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
 					return processaRELOP();
-				case '|':
+				case 'n':
 					t = new Token(TokenType.LOGIC_OP, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
 					return processaRELOP();
+				case 'd':
+					t = new Token(TokenType.LOGIC_OP, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					return t;
+				case 'o':
+					t = new Token(TokenType.LOGIC_OP, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					return processaRELOP();
+				case 'r':
+					t = new Token(TokenType.LOGIC_OP, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					return t;
 				// ...
 		
 				default:
