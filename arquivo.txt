@@ -1,3 +1,14 @@
-verdadeiro
-falso
-nao e float
+verdadeiro falso
+nao e ou
+bool text int float
+programa
+end_prog
+fim
+se
+entao
+senao
+para
+enquanto
+declare
+ate
+inicio
