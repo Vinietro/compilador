@@ -48,17 +48,7 @@ public class Lexico {
 				lexema.append(c);
 		
 				// Busca token
-				switch (c) {
-				case '(':
-					t = new Token(TokenType.L_PAR, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
-					return t;
-				case ')':
-					t = new Token(TokenType.L_PAR, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
-					return t;
+				switch (c) {				
 				case '+':
 					t = new Token(TokenType.ARIT_AS, lexema.toString());
 					t.setLin(this.fl.getLine());
@@ -80,32 +70,134 @@ public class Lexico {
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
 					return t;
-				case 'e':
-					t = new Token(TokenType.LOGIC_OP, lexema.toString());
+				case '<':
+					t = new Token(TokenType.ASSIGN, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
-					return processaRELOP();
+					// Tenta buscar o próximo '<'
+					try {
+						c = this.fl.getNextChar();
+						lexema.append(c);
+						if(c == '<') {
+							t.setLexema(lexema.toString());
+							return t;
+						}
+						break;
+					} catch (EOFException e) {
+						return new Token(TokenType.EOF, "");
+					}
+				case '.':
+					t = new Token(TokenType.TERM, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					return t;
+				case '(':
+					t = new Token(TokenType.L_PAR, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					return t;
+				case ')':
+					t = new Token(TokenType.L_PAR, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					return t;
+				case 'v':
+					t = new Token(TokenType.LOGIC_VAL, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "verdadeiro") != null) {
+						return t;
+					}
+					break;
+				case 'f':
+					t = new Token(TokenType.LOGIC_VAL, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "falso") != null) {
+						return t;
+					}
+					retornaPalavra();
+					t = new Token(TokenType.TYPE, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "float") != null) {
+						return t;
+					}
+					break;
 				case 'n':
 					t = new Token(TokenType.LOGIC_OP, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
-					return processaRELOP();
-				case 'd':
+					if(processaPalavra(t, "nao") != null) {
+						return t;
+					}
+					break;
+				case 'e':
 					t = new Token(TokenType.LOGIC_OP, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
-					return t;
+					if(processaPalavra(t, "e") != null) {
+						return t;
+					}
+					retornaPalavra();
+					t = new Token(TokenType.END_PROG, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "end_prog") != null) {
+						return t;
+					}
+					break;
 				case 'o':
 					t = new Token(TokenType.LOGIC_OP, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
-					return processaRELOP();
+					if(processaPalavra(t, "ou") != null) {
+						return t;
+					}
+					break;	
+				case 'b':
+					t = new Token(TokenType.TYPE, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "bool") != null) {
+						return t;
+					}
+					break;	
+				case 't':
+					t = new Token(TokenType.TYPE, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "text") != null) {
+						return t;
+					}
+					break;
+				case 'i':
+					t = new Token(TokenType.TYPE, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "int") != null) {
+						return t;
+					}
+					break;
+				case 'p':
+					t = new Token(TokenType.PROGRAM, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "programa") != null) {
+						return t;
+					}
+					break;
+				case 'd':
+					t = new Token(TokenType.LOGIC_OP, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					return t;				
 				case 'r':
 					t = new Token(TokenType.LOGIC_OP, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
 					return t;
-				// ...
+					
 		
 				default:
 					if (Character.isLetter(c)) {
@@ -126,6 +218,34 @@ public class Lexico {
 		}
 	}
   
+	
+	
+	private Token processaPalavra(Token t, String palavra) throws IOException {
+		char c;
+		while(palavra.contains(lexema.toString())) {
+			if(palavra.equals(lexema.toString())) {
+				t.setLexema(lexema.toString());
+				return t;
+			}
+			try {
+				c = this.fl.getNextChar();
+				lexema.append(c);							
+			} catch (EOFException e) {
+				return new Token(TokenType.EOF, "");
+			}
+		}
+		return null;
+	}
+	
+	public void retornaPalavra() throws IOException {		
+		for(int i = 0; i < lexema.length(); i++) {
+			fl.resetLastChar();
+		}	
+		char c = lexema.charAt(0);
+		lexema = new StringBuilder();
+		lexema.append(c);
+	}
+	
 	private Token processaRELOP() {
 		return null;
 	}

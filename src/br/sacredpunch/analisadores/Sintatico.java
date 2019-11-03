@@ -1,6 +1,7 @@
 package br.sacredpunch.analisadores;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import br.sacredpunch.units.ErrorHandler;
 import br.sacredpunch.units.TabSimbolos;
@@ -11,14 +12,15 @@ public class Sintatico {
 	private Lexico lex;
 	
 	public Sintatico(String filename) throws FileNotFoundException {
-		this.lex = new Lexico(filename);
+		this.lex = new Lexico();
+		this.lex.getFileName(filename);
 	}
 	
-	public void processar() {
+	public void processar() throws IOException {
 		//imprimir o cabeçalho de saída
 		//--------------------------------
 		//(lin, col) | Token   |Lexema
-		
+		System.out.println("LINHA COLUNA | Token | Lexema");
 		//Chama nextToken até que um EOF ocorra
 		Token t = lex.nextToken();
 		while (t.getTokenType() != TokenType.EOF) {
@@ -30,6 +32,6 @@ public class Sintatico {
 		TabSimbolos.getInstance().printTabela();
 		
 		//imprimir relatorio de erros
-		ErrorHandler.getInstance().printErrorReport();
+		// ErrorHandler.getInstance().printErrorReport();
 	}
 }

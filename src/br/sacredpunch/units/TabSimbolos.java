@@ -45,7 +45,7 @@ public class TabSimbolos {
 	}
 	
 	public void printTabela() {
-		
+		System.out.println(this.tabela.toString());		
 	}
 	
 }
