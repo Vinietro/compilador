@@ -1,0 +1,3 @@
+verdadeiro
+falso
+nao e float
