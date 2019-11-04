@@ -74,18 +74,10 @@ public class Lexico {
 					t = new Token(TokenType.ASSIGN, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
-					// Tenta buscar o próximo '<'
-					try {
-						c = this.fl.getNextChar();
-						lexema.append(c);
-						if(c == '<') {
-							t.setLexema(lexema.toString());
-							return t;
-						}
-						break;
-					} catch (EOFException e) {
-						return new Token(TokenType.EOF, "");
+					if(processaPalavra(t, "<<") != null) {
+						return t;
 					}
+					break;
 				case '.':
 					t = new Token(TokenType.TERM, lexema.toString());
 					t.setLin(this.fl.getLine());
@@ -123,6 +115,13 @@ public class Lexico {
 					if(processaPalavra(t, "float") != null) {
 						return t;
 					}
+					retornaPalavra();
+					t = new Token(TokenType.END, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "fim") != null) {
+						return t;
+					}
 					break;
 				case 'n':
 					t = new Token(TokenType.LOGIC_OP, lexema.toString());
@@ -132,18 +131,32 @@ public class Lexico {
 						return t;
 					}
 					break;
-				case 'e':
-					t = new Token(TokenType.LOGIC_OP, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
-					if(processaPalavra(t, "e") != null) {
-						return t;
-					}
-					retornaPalavra();
+				case 'e':					
 					t = new Token(TokenType.END_PROG, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
 					if(processaPalavra(t, "end_prog") != null) {
+						return t;
+					}
+					retornaPalavra();
+					t = new Token(TokenType.THEN, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "entao") != null) {
+						return t;
+					}
+					retornaPalavra();
+					t = new Token(TokenType.WHILE, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "enquanto") != null) {
+						return t;
+					}
+					retornaPalavra();
+					t = new Token(TokenType.LOGIC_OP, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "e") != null) {
 						return t;
 					}
 					break;
@@ -178,6 +191,13 @@ public class Lexico {
 					if(processaPalavra(t, "int") != null) {
 						return t;
 					}
+					retornaPalavra();
+					t = new Token(TokenType.BEGIN, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "inicio") != null) {
+						return t;
+					}
 					break;
 				case 'p':
 					t = new Token(TokenType.PROGRAM, lexema.toString());
@@ -186,17 +206,45 @@ public class Lexico {
 					if(processaPalavra(t, "programa") != null) {
 						return t;
 					}
+					retornaPalavra();
+					t = new Token(TokenType.FOR, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "para") != null) {
+						return t;
+					}
+					break;
+				case 's':
+					t = new Token(TokenType.ELSE, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "senao") != null) {
+						return t;
+					}					
+					retornaPalavra();
+					t = new Token(TokenType.IF, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					if(processaPalavra(t, "se") != null) {
+						return t;
+					}					
 					break;
 				case 'd':
-					t = new Token(TokenType.LOGIC_OP, lexema.toString());
+					t = new Token(TokenType.DECLARE, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
-					return t;				
-				case 'r':
-					t = new Token(TokenType.LOGIC_OP, lexema.toString());
+					if(processaPalavra(t, "declare") != null) {
+						return t;
+					}
+					break;	
+				case 'a':
+					t = new Token(TokenType.TO, lexema.toString());
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
-					return t;
+					if(processaPalavra(t, "ate") != null) {
+						return t;
+					}
+					break;
 					
 		
 				default:
