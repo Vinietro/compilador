@@ -94,13 +94,15 @@ public class Lexico {
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
 					return t;
+				case '&':
+					processaRELOP(c, t);
 				default:
 					if (Character.isLetter(c)) {
 						return processaID(c, t);
 					} else if (Character.isDigit(c)) {
 						return processaNUM(c, t);
 					} else {					
-						throw new ErroLexicoException();
+						throw new ErroLexicoException(c);
 					}
 				}
 			} catch (IOException ioe) {
@@ -141,8 +143,76 @@ public class Lexico {
 		lexema.append(c);
 	}*/
 	
-	private Token processaRELOP() {
-		return null;
+	private Token processaRELOP(char c, Token t) throws EOFException, IOException {
+		lexema.append(c);
+		c = this.fl.getNextChar();
+		if(c == 'l') {
+			lexema.append(c);
+			c= this.fl.getNextChar();
+			if(c == 't') {
+				lexema.append(c);
+				c = this.fl.getNextChar();
+				if(c == ';') {
+					lexema.append(c);
+				}
+			}
+		}else if(c == 'g') {
+			lexema.append(c);
+			c= this.fl.getNextChar();
+			if(c == 't') {
+				lexema.append(c);
+				c = this.fl.getNextChar();
+				if(c == ';') {
+					lexema.append(c);
+				}
+			}
+		}else if(c == 'g') {
+			lexema.append(c);
+			c= this.fl.getNextChar();
+			if(c == 'e') {
+				lexema.append(c);
+				c = this.fl.getNextChar();
+				if(c == ';') {
+					lexema.append(c);
+				}
+			}
+		}else if(c == 'l') {
+			lexema.append(c);
+			c= this.fl.getNextChar();
+			if(c == 'e') {
+				lexema.append(c);
+				c = this.fl.getNextChar();
+				if(c == ';') {
+					lexema.append(c);
+				}
+			}
+		}else if(c == 'e') {
+			lexema.append(c);
+			c= this.fl.getNextChar();
+			if(c == 'q') {
+				lexema.append(c);
+				c = this.fl.getNextChar();
+				if(c == ';') {
+					lexema.append(c);
+				}
+			}
+		}else if(c == 'd') {
+			lexema.append(c);
+			c= this.fl.getNextChar();
+			if(c == 'f') {
+				lexema.append(c);
+				c = this.fl.getNextChar();
+				if(c == ';') {
+					lexema.append(c);
+				}
+			}
+		}
+		
+		t = new Token(TokenType.RELOP, lexema.toString());
+		t.setLin(this.fl.getLine());
+		t.setCol(this.fl.getColumn());
+		
+		return t;
 	}
 
 	private Token processaID(char c, Token t) throws EOFException, IOException {
