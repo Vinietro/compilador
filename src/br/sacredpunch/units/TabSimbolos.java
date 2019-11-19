@@ -37,7 +37,6 @@ public class TabSimbolos {
 		tabela.put("enquanto", new Token(TokenType.WHILE, "enquanto"));
 		tabela.put("declare", new Token(TokenType.DECLARE, "declare"));
 		tabela.put("ate", new Token(TokenType.TO, "ate"));		
-		
 	}
 	
 	public static TabSimbolos getInstance() {
