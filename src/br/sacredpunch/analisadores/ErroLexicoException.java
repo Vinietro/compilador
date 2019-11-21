@@ -8,17 +8,20 @@ public class ErroLexicoException extends Exception {
 	// Criar metodos para testar os lexemas
 	
 	private char c;
+	private String lexema;
 	
 	
-
-	ErroLexicoException(char c2) {
+	public ErroLexicoException(char c2, String string) {
 		this.c = c2;
+		this.lexema = string;
 	}
-
 
 	@Override
 	public String toString() {
-		return this.c + ": " + "Não é um valor valido";
+		
+		Token t = null;
+		
+		return this.c + ": " + "Não é um lexema valido" + " " + "--> " + "|" + this.lexema;
 	}
 	
 	

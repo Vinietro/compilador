@@ -2,6 +2,9 @@ package br.sacredpunch.units;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
+
+import br.sacredpunch.analisadores.Lexico;
 
 //Esta classe é criada como um singleton
 
@@ -40,6 +43,8 @@ public class TabSimbolos {
 	}
 	
 	public static TabSimbolos getInstance() {
+		
+		
 		return instance;
 	}
 	

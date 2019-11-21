@@ -95,14 +95,61 @@ public class Lexico {
 					t.setCol(this.fl.getColumn());
 					return t;
 				case '&':
-					processaRELOP(c, t);
+					while(!Character.isWhitespace(c)) {
+						
+						c = this.fl.getNextChar();
+						if(c == 'l' || c == 'g' || c == 'e' || c == 'd') {
+							lexema.append(c);
+							c = this.fl.getNextChar();
+							if(c == 't' || c == 'e' || c == 'q' || c == 'f') {
+								lexema.append(c);
+								c = this.fl.getNextChar();
+								if(c == ';') {
+									lexema.append(c);
+								} else {
+									if(c != ';') {
+										throw new ErroLexicoException(c , lexema.toString());
+									}
+								}
+							}else {
+									while(Character.isLetter(c) || c == ';') {
+										lexema.append(c);
+										c = this.fl.getNextChar();
+									}
+								throw new ErroLexicoException(c , lexema.toString());
+							}
+						} 
+						
+					}
+					
+					t = new Token(TokenType.RELOP, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					
+					return t;
+
+				case '\'':
+					c = this.fl.getNextChar();
+					while(Character.isLetter(c) || Character.isDigit(c) || c == '_' || c == '-' || c == ':') {
+						lexema.append(c);
+						c = this.fl.getNextChar();
+					}
+					if(c == '\'') {
+						lexema.append(c);
+					}
+					t = new Token(TokenType.LITERAL, lexema.toString());
+					t.setLin(this.fl.getLine());
+					t.setCol(this.fl.getColumn());
+					return t;
+				case '$':
+					return processaID(c, t);
 				default:
 					if (Character.isLetter(c)) {
-						return processaID(c, t);
+						return  processaID(c, t);
 					} else if (Character.isDigit(c)) {
 						return processaNUM(c, t);
 					} else {					
-						throw new ErroLexicoException(c);
+						throw new ErroLexicoException(c , lexema.toString());
 					}
 				}
 			} catch (IOException ioe) {
@@ -111,6 +158,7 @@ public class Lexico {
 			} catch (ErroLexicoException ele) {
 				// Trata o erro l�xico (registra)
 				ErrorHandler.getInstance().printErrorReport(ele);
+				ele.printStackTrace();
 			}
 		}
 	}
@@ -143,82 +191,15 @@ public class Lexico {
 		lexema.append(c);
 	}*/
 	
-	private Token processaRELOP(char c, Token t) throws EOFException, IOException {
-		lexema.append(c);
-		c = this.fl.getNextChar();
-		if(c == 'l') {
-			lexema.append(c);
-			c= this.fl.getNextChar();
-			if(c == 't') {
-				lexema.append(c);
-				c = this.fl.getNextChar();
-				if(c == ';') {
-					lexema.append(c);
-				}
-			}
-		}else if(c == 'g') {
-			lexema.append(c);
-			c= this.fl.getNextChar();
-			if(c == 't') {
-				lexema.append(c);
-				c = this.fl.getNextChar();
-				if(c == ';') {
-					lexema.append(c);
-				}
-			}
-		}else if(c == 'g') {
-			lexema.append(c);
-			c= this.fl.getNextChar();
-			if(c == 'e') {
-				lexema.append(c);
-				c = this.fl.getNextChar();
-				if(c == ';') {
-					lexema.append(c);
-				}
-			}
-		}else if(c == 'l') {
-			lexema.append(c);
-			c= this.fl.getNextChar();
-			if(c == 'e') {
-				lexema.append(c);
-				c = this.fl.getNextChar();
-				if(c == ';') {
-					lexema.append(c);
-				}
-			}
-		}else if(c == 'e') {
-			lexema.append(c);
-			c= this.fl.getNextChar();
-			if(c == 'q') {
-				lexema.append(c);
-				c = this.fl.getNextChar();
-				if(c == ';') {
-					lexema.append(c);
-				}
-			}
-		}else if(c == 'd') {
-			lexema.append(c);
-			c= this.fl.getNextChar();
-			if(c == 'f') {
-				lexema.append(c);
-				c = this.fl.getNextChar();
-				if(c == ';') {
-					lexema.append(c);
-				}
-			}
-		}
-		
-		t = new Token(TokenType.RELOP, lexema.toString());
-		t.setLin(this.fl.getLine());
-		t.setCol(this.fl.getColumn());
-		
-		return t;
-	}
 
 	private Token processaID(char c, Token t) throws EOFException, IOException {
-		while(Character.isLetter(c) || c == '_') {
-			lexema.append(c);
+		
+		
+		
+		while(Character.isLetter(c) || Character.isDigit(c) || c == '_' || c == '$') {
+			
 			c = this.fl.getNextChar();
+			lexema.append(c);
 		}
 		t = new Token(TokenType.ID, lexema.toString());
 		t.setLin(this.fl.getLine());
@@ -226,12 +207,45 @@ public class Lexico {
 		return t;
 	}
 
-	private Token processaNUM(char c, Token t) throws EOFException, IOException {
-		while(Character.isDigit(c)) {
+	private Token processaNUM(char c, Token t) throws EOFException, IOException, ErroLexicoException {
+		
+		
+		while(Character.isDigit(c) || c == 'E' || c == '+') {
+			c = this.fl.getNextChar();
+			lexema.append(c);
+			if(c == '.') {
+				while(Character.isDigit(c) || c == '.' || c == 'E' || c == '+') {
+					c = this.fl.getNextChar();
+					lexema.append(c);
+					t = new Token(TokenType.NUM_FLOAT, lexema.toString());
+					if(c == '.' || (Character.isLetter(c) && c != 'E' )) {
+						while(Character.isLetter(c) || c == '.' || Character.isDigit(c)) {
+							c = this.fl.getNextChar();
+							lexema.append(c);
+						}
+						throw new ErroLexicoException(c, lexema.toString());
+					}
+				}
+			}else {
+				t = new Token(TokenType.NUM_INT, lexema.toString());
+			}
+		}
+		t.setLin(this.fl.getLine());
+		
+		t.setCol(this.fl.getColumn());
+		return t;
+	}
+	
+	private Token processaLITERAL(char c, Token t) throws EOFException, IOException {
+		c = this.fl.getNextChar();
+		while(Character.isLetter(c) || Character.isDigit(c) || c == '_' || c == '-' || c == ':') {
 			lexema.append(c);
 			c = this.fl.getNextChar();
 		}
-		t = new Token(TokenType.ID, lexema.toString());
+		if(c == '\'') {
+			lexema.append(c);
+		}
+		t = new Token(TokenType.LITERAL, lexema.toString());
 		t.setLin(this.fl.getLine());
 		t.setCol(this.fl.getColumn());
 		return t;

@@ -1,14 +1,19 @@
 package br.sacredpunch.units;
 
+import br.sacredpunch.units.TabSimbolos;
+
 public class Token {
 	
 	private String lexema;
 	private int lin;
 	private int col;
-	
+
 	
 	private TokenType tokenType;
 	public TokenType getTokenType() {
+		
+		TabSimbolos.getInstance().hashCode();
+		
 		return tokenType;
 	}
 	public void setTokenType(TokenType tokenType) {

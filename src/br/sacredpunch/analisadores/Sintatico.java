@@ -7,9 +7,12 @@ import br.sacredpunch.units.ErrorHandler;
 import br.sacredpunch.units.TabSimbolos;
 import br.sacredpunch.units.Token;
 import br.sacredpunch.units.TokenType;
+import br.sacredpunch.analisadores.ErroLexicoException;
 
 public class Sintatico {
 	private Lexico lex;
+	
+	private ErroLexicoException ele;
 	
 	public Sintatico(String filename) throws FileNotFoundException {
 		this.lex = new Lexico();
@@ -32,6 +35,6 @@ public class Sintatico {
 		TabSimbolos.getInstance().printTabela();
 		
 		//imprimir relatorio de erros
-		// ErrorHandler.getInstance().printErrorReport();
+		//ErrorHandler.getInstance().printErrorReport();
 	}
 }
