@@ -26,6 +26,8 @@ public class Lexico {
 	}
 
 	public Token nextToken() throws IOException {
+		int lin;
+		int col;
 		while(true) {
 			lexema = new StringBuilder();
 			try {
@@ -35,7 +37,7 @@ public class Lexico {
 				try {
 					c = this.fl.getNextChar();
 				} catch (EOFException e) {
-					return new Token(TokenType.EOF, "");
+					return new Token(TokenType.EOF, "", c, c);
 				}
 		
 				// Descarte de espa�os em branco
@@ -50,7 +52,8 @@ public class Lexico {
 				// Busca token
 				switch (c) {				
 				case '+':
-					t = new Token(TokenType.ARIT_AS, lexema.toString());
+					lin = this.fl.getLine();
+					t = new Token(TokenType.ARIT_AS, lexema.toString(), lin, col);
 					t.setLin(this.fl.getLine());
 					t.setCol(this.fl.getColumn());
 					return t;

@@ -7,9 +7,9 @@ public class Token {
 	private String lexema;
 	private int lin;
 	private int col;
-
-	
 	private TokenType tokenType;
+	
+	
 	public TokenType getTokenType() {
 		
 		TabSimbolos.getInstance().hashCode();
@@ -38,10 +38,12 @@ public class Token {
 		this.col = col;
 	}
 	
-	public Token(TokenType tType, String lexema) {
+	public Token(TokenType tType, String lexema, int lin, int col) {
 		
 		setTokenType(tType);
 		setLexema(lexema);
+		setLin(lin);
+		setCol(col);
 		
 	}
 	
