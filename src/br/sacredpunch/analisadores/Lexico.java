@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import br.sacredpunch.units.ErrorHandler;
 import br.sacredpunch.units.FileLoader;
+import br.sacredpunch.units.TabSimbolos;
 import br.sacredpunch.units.Token;
 import br.sacredpunch.units.TokenType;
 
@@ -15,7 +16,7 @@ public class Lexico {
 	// Define variavel "lexema"
 	private StringBuilder lexema = new StringBuilder();
 
-	
+	private TabSimbolos tab = TabSimbolos.getInstance();
 	
 	public void getFileName(String filename) throws FileNotFoundException {
 		this.fl = new FileLoader(filename);
@@ -37,7 +38,7 @@ public class Lexico {
 				try {
 					c = this.fl.getNextChar();
 				} catch (EOFException e) {
-					return new Token(TokenType.EOF, "", c, c);
+					return new Token(TokenType.EOF, "", this.fl.getLine(), this.fl.getColumn());
 				}
 		
 				// Descarte de espa�os em branco
@@ -53,49 +54,33 @@ public class Lexico {
 				switch (c) {				
 				case '+':
 					lin = this.fl.getLine();
-					t = new Token(TokenType.ARIT_AS, lexema.toString(), lin, col);
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
+					t = new Token(TokenType.ARIT_AS, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					return t;
 				case '-':
 					// Retorna token do tipo ARIT_AS
-					t = new Token(TokenType.ARIT_AS, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
+					t = new Token(TokenType.ARIT_AS, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					return t;
 				case '*':
-					t = new Token(TokenType.ARIT_MD, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
+					t = new Token(TokenType.ARIT_MD, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					return t;
 				case '/':
-					t = new Token(TokenType.ARIT_MD, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
+					t = new Token(TokenType.ARIT_MD, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					return t;
 				case '<':
 					while(c == '<') {
 						lexema.append(c);
 						c = this.fl.getNextChar();
 					}
-					t = new Token(TokenType.ASSIGN, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
+					t = new Token(TokenType.ASSIGN, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					return t;
 				case '.':
-					t = new Token(TokenType.TERM, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
+					t = new Token(TokenType.TERM, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					return t;
 				case '(':
-					t = new Token(TokenType.L_PAR, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
+					t = new Token(TokenType.L_PAR, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					return t;
 				case ')':
-					t = new Token(TokenType.L_PAR, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
+					t = new Token(TokenType.L_PAR, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					return t;
 				case '&':
 					while(!Character.isWhitespace(c)) {
@@ -125,9 +110,7 @@ public class Lexico {
 						
 					}
 					
-					t = new Token(TokenType.RELOP, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
+					t = new Token(TokenType.RELOP, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					
 					return t;
 
@@ -140,15 +123,12 @@ public class Lexico {
 					if(c == '\'') {
 						lexema.append(c);
 					}
-					t = new Token(TokenType.LITERAL, lexema.toString());
-					t.setLin(this.fl.getLine());
-					t.setCol(this.fl.getColumn());
+					t = new Token(TokenType.LITERAL, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					return t;
-				case '$':
-					return processaID(c, t);
 				default:
-					if (Character.isLetter(c)) {
-						return  processaID(c, t);
+					if (Character.isLetter(c) || c == '$') {
+						//lexema.append(c);
+						return  processaID();
 					} else if (Character.isDigit(c)) {
 						return processaNUM(c, t);
 					} else {					
@@ -157,7 +137,7 @@ public class Lexico {
 				}
 			} catch (IOException ioe) {
 				// FALLBACK: erro de leitura, imterromper processamento
-				return new Token(TokenType.EOF, "<Mensagem de Erro>");
+				return new Token(TokenType.EOF, "<Mensagem de Erro>", this.fl.getLine(), this.fl.getColumn());
 			} catch (ErroLexicoException ele) {
 				// Trata o erro l�xico (registra)
 				ErrorHandler.getInstance().printErrorReport(ele);
@@ -195,18 +175,19 @@ public class Lexico {
 	}*/
 	
 
-	private Token processaID(char c, Token t) throws EOFException, IOException {
+	private Token processaID() throws EOFException, IOException {
 		
+		char c = this.fl.getNextChar();
 		
-		
-		while(Character.isLetter(c) || Character.isDigit(c) || c == '_' || c == '$') {
-			
-			c = this.fl.getNextChar();
+		while(Character.isLetter(c) || Character.isDigit(c) || c == '$') {
 			lexema.append(c);
+			c = this.fl.getNextChar();
+			
 		}
-		t = new Token(TokenType.ID, lexema.toString());
-		t.setLin(this.fl.getLine());
-		t.setCol(this.fl.getColumn());
+		//t = new Token(TokenType.ID, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
+		
+		Token t = tab.comparaID(lexema.toString(),this.fl.getLine(), this.fl.getColumn());
+		
 		return t;
 	}
 
@@ -220,7 +201,7 @@ public class Lexico {
 				while(Character.isDigit(c) || c == '.' || c == 'E' || c == '+') {
 					c = this.fl.getNextChar();
 					lexema.append(c);
-					t = new Token(TokenType.NUM_FLOAT, lexema.toString());
+					t = new Token(TokenType.NUM_FLOAT, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					if(c == '.' || (Character.isLetter(c) && c != 'E' )) {
 						while(Character.isLetter(c) || c == '.' || Character.isDigit(c)) {
 							c = this.fl.getNextChar();
@@ -230,29 +211,13 @@ public class Lexico {
 					}
 				}
 			}else {
-				t = new Token(TokenType.NUM_INT, lexema.toString());
+				t = new Token(TokenType.NUM_INT, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 			}
 		}
-		t.setLin(this.fl.getLine());
 		
-		t.setCol(this.fl.getColumn());
 		return t;
 	}
 	
-	private Token processaLITERAL(char c, Token t) throws EOFException, IOException {
-		c = this.fl.getNextChar();
-		while(Character.isLetter(c) || Character.isDigit(c) || c == '_' || c == '-' || c == ':') {
-			lexema.append(c);
-			c = this.fl.getNextChar();
-		}
-		if(c == '\'') {
-			lexema.append(c);
-		}
-		t = new Token(TokenType.LITERAL, lexema.toString());
-		t.setLin(this.fl.getLine());
-		t.setCol(this.fl.getColumn());
-		return t;
-	}
 	
 
 }

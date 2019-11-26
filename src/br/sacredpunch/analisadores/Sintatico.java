@@ -34,6 +34,7 @@ public class Sintatico {
 		//Imprimir a tabela de símbolos
 		TabSimbolos.getInstance().printTabela();
 		
+		
 		//imprimir relatorio de erros
 		//ErrorHandler.getInstance().printErrorReport();
 	}

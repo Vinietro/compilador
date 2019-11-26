@@ -1,4 +1,7 @@
-'OlaMundo'  for do while 
+'OlaMundo' ate for enquanto
+
+
+end
 
 
 &lt;  &gt;  &ge;  &le;  &eq;  &df;

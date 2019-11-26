@@ -8,14 +8,16 @@ public class Token {
 	private int lin;
 	private int col;
 	private TokenType tokenType;
-	
+
+	TabSimbolos tab;
 	
 	public TokenType getTokenType() {
 		
-		TabSimbolos.getInstance().hashCode();
-		
+		TabSimbolos.getInstance();
 		return tokenType;
 	}
+	
+	
 	public void setTokenType(TokenType tokenType) {
 		this.tokenType = tokenType;
 	}
@@ -47,7 +49,9 @@ public class Token {
 		
 	}
 	
+	
 	public void printToken() {
+		
 		System.out.println(this.getLin() + "     " + this.getCol() + "      | " 
 				+ this.getTokenType() + " | " + this.lexema.toString());
 	}

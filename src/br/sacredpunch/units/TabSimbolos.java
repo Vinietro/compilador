@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import br.sacredpunch.analisadores.Lexico;
+import br.sacredpunch.units.Token;
 
 //Esta classe é criada como um singleton
 
@@ -12,7 +13,7 @@ public class TabSimbolos {
 	private  static TabSimbolos instance = new TabSimbolos();
 	
 	
-	private static Map<String, Token> tabela;
+	private Map<String, Token> tabela;
 	
 	
 	private TabSimbolos() {
@@ -48,10 +49,13 @@ public class TabSimbolos {
 		return instance;
 	}
 	
-	public static Token comparaID(String lex, int lin, int col) {
-		
-		tabela = new HashMap<String, Token>();
-		
+	
+	public void printTabela() {
+		System.out.println(this.tabela.toString());		
+	}
+
+
+	public Token comparaID(String lex, int lin, int col) {
 		Token t = tabela.get(lex);
 		
 		if(t != null) {
@@ -63,10 +67,9 @@ public class TabSimbolos {
 		}
 		
 		return t;
+		
 	}
+
 	
-	public void printTabela() {
-		System.out.println(this.tabela.toString());		
-	}
 	
 }
