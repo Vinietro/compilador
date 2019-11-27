@@ -37,5 +37,111 @@ public class Sintatico {
 		
 		//imprimir relatorio de erros
 		//ErrorHandler.getInstance().printErrorReport();
+		
+		
+	}
+	
+	public void loadS() {
+		
+	}
+	
+	public void loadBLOCO() {
+		
+	}
+	
+	public void loadCMDS() {
+		
+	}
+	
+	public void loadCMD() {
+		
+	}
+	
+	public void loadDECL() {
+		
+	}
+	
+	public void loadCOND() {
+		
+	}
+	
+	public void loadCNDB() {
+		
+	}
+	
+	public void loadATRIB() {
+		
+	}
+	
+	public void loadEXP() {
+		
+	}
+	
+	public void loadFID() {
+		
+	}
+	
+	public void loadFOPNUM() {
+		
+	}
+	
+	public void loadFEXPNUM_1() {
+		
+	}
+	
+	public void loadFNUM() {
+		
+	}
+	
+	public void loadFLPAR() {
+		
+	}
+	
+	public void loadFEXPNUM() {
+		
+	}
+	
+	public void loadFRPAR() {
+		
+	}
+	
+	public void loadEXPLO() {
+		
+	}
+	
+	public void loadFID_1() {
+		
+	}
+	
+	public void loadFVALLOG() {
+		
+	}
+	
+	public void loadEXPNUM() {
+		
+	}
+	
+	public void loadXEXPNUM() {
+		
+	}
+	
+	public void loadOPNUM() {
+		
+	}
+	
+	public void loadVAL() {
+		
+	}
+	
+	public void loadREP() {
+		
+	}
+	
+	public void loadREPF() {
+		
+	}
+	
+	public void loadREPW() {
+		
 	}
 }
