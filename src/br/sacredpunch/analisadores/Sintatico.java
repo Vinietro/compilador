@@ -40,12 +40,28 @@ public class Sintatico {
 		
 		
 	}
-	
+
 	public void loadS() {
 		
 	}
 	
-	public void loadBLOCO() {
+	public void loadBLOCO() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		
+		if(t.getTokenType() == TokenType.BEGIN) {
+			loadCMDS();
+			t = lex.nextToken();
+			if (t.getTokenType() != TokenType.END) {
+				throw new ErroSintaticoException(t.getTokenType());
+			}else if((t.getTokenType() != TokenType.FOR) ||
+					 (t.getTokenType() != TokenType.WHILE) || 
+					 (t.getTokenType() != TokenType.ID) ||
+					 (t.getTokenType() != TokenType.DECLARE )){
+				
+			}
+		}else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 		
 	}
 	
@@ -144,4 +160,5 @@ public class Sintatico {
 	public void loadREPW() {
 		
 	}
+	
 }

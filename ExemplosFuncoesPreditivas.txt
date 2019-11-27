@@ -1,0 +1,48 @@
+giulliano.carnielli@unimetrocamp.edu.br
+
+derivaBLOCO() {
+	t = nextToken();
+	if (t.getType() == TType.BEGIN) {
+		// Regra 2
+		derivaCMDS();
+		t = nextToken();
+		if (t.getType() != TType.END) {
+			// ERRO
+			ErrorHandler.reportError(...);
+		}
+	else if (t.getType() == TType.FOR ||
+	         t.getType() == TType.WHILE ||
+			 t.getType() == TType.ID ||
+			 t.getType() == TType.DECLARE) {
+		// Regra 3
+		storeToken();
+		derivaCMD();
+	} else {
+		// ERRO
+		ErrorHandler.reportError(...);
+	}
+}
+
+derivaCNDB() {
+	t = nextToken();
+	if (t.getType() == TType.ELSE) {
+		// Regra 16
+		derivaBLOCO();
+	} else if (FirstFollow.isFollowOf(TVar.CNDB, t.getType()) {
+		storeToken();
+	} else {
+		// ERRO
+		ErrorHandler.reportError(...);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+declare if for while id end end_prog else
