@@ -58,6 +58,9 @@ public class Sintatico {
 					 (t.getTokenType() != TokenType.ID) ||
 					 (t.getTokenType() != TokenType.DECLARE )){
 				
+				storageToken();
+				loadCMD();
+								
 			}
 		}else {
 			throw new ErroSintaticoException(t.getTokenType());
@@ -65,6 +68,11 @@ public class Sintatico {
 		
 	}
 	
+	private void storageToken() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void loadCMDS() {
 		
 	}
