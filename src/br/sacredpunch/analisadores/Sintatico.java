@@ -4,15 +4,20 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import br.sacredpunch.units.ErrorHandler;
+import br.sacredpunch.units.FirstFollow;
+import br.sacredpunch.units.RuleType;
 import br.sacredpunch.units.TabSimbolos;
 import br.sacredpunch.units.Token;
 import br.sacredpunch.units.TokenType;
 import br.sacredpunch.analisadores.ErroLexicoException;
+import br.sacredpunch.units.FirstFollow;
 
 public class Sintatico {
 	private Lexico lex;
 	
 	private ErroLexicoException ele;
+	
+	FirstFollow first;
 	
 	public Sintatico(String filename) throws FileNotFoundException {
 		this.lex = new Lexico();
@@ -49,27 +54,30 @@ public class Sintatico {
 		Token t = lex.nextToken();
 		
 		if(t.getTokenType() == TokenType.BEGIN) {
+			// Regra 2
 			loadCMDS();
 			t = lex.nextToken();
 			if (t.getTokenType() != TokenType.END) {
+				// ERRO
 				throw new ErroSintaticoException(t.getTokenType());
 			}else if((t.getTokenType() != TokenType.FOR) ||
 					 (t.getTokenType() != TokenType.WHILE) || 
 					 (t.getTokenType() != TokenType.ID) ||
 					 (t.getTokenType() != TokenType.DECLARE )){
-				
+				// Regra 3
 				storageToken();
 				loadCMD();
 								
 			}
 		}else {
+			// ERRO
 			throw new ErroSintaticoException(t.getTokenType());
 		}
 		
 	}
 	
 	private void storageToken() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -89,7 +97,17 @@ public class Sintatico {
 		
 	}
 	
-	public void loadCNDB() {
+	public void loadCNDB() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if(t.getTokenType() == TokenType.ELSE) {
+			// Regra 16
+			loadBLOCO();
+		}else if(first.isFollowOf(RuleType.BLOCO, t.getTokenType())) {
+			storageToken();
+		}else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
+		
 		
 	}
 	
