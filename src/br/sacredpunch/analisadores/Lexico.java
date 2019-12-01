@@ -83,6 +83,7 @@ public class Lexico {
 					t = new Token(TokenType.L_PAR, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					return t;
 				case '&':
+					t = new Token(TokenType.RELOP, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					while(!Character.isWhitespace(c)) {
 						
 						c = this.fl.getNextChar();
@@ -110,11 +111,12 @@ public class Lexico {
 						
 					}
 					
-					t = new Token(TokenType.RELOP, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
+					t.setLexema(lexema.toString());
 					
 					return t;
 
 				case '\'':
+					t = new Token(TokenType.LITERAL, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					c = this.fl.getNextChar();
 					while(Character.isLetter(c) || Character.isDigit(c) || c == '_' || c == '-' || c == ':') {
 						lexema.append(c);
@@ -123,7 +125,7 @@ public class Lexico {
 					if(c == '\'') {
 						lexema.append(c);
 					}
-					t = new Token(TokenType.LITERAL, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
+					t.setLexema(lexema.toString());
 					return t;
 				default:
 					if (Character.isLetter(c) || c == '$') {
@@ -146,62 +148,38 @@ public class Lexico {
 		}
 	}
   
-	
-	
-	/*private Token processaPalavra(Token t, String palavra) throws IOException {
-		char c;
-		while(palavra.contains(lexema.toString())) {
-			if(palavra.equals(lexema.toString())) {
-				t.setLexema(lexema.toString());
-				return t;
-			}
-			try {
-				c = this.fl.getNextChar();
-				lexema.append(c);							
-			} catch (EOFException e) {
-				return new Token(TokenType.EOF, "");
-			}
-		}
-		return null;
-	}*/
-	
-	/*public void retornaPalavra() throws IOException {		
-		for(int i = 0; i < lexema.length(); i++) {
-			fl.resetLastChar();
-		}	
-		char c = lexema.charAt(0);
-		lexema = new StringBuilder();
-		lexema.append(c);
-	}*/
-	
-
 	private Token processaID() throws EOFException, IOException {
+		
+		Token t = new Token(TokenType.ID, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 		
 		char c = this.fl.getNextChar();
 		
-		while(Character.isLetter(c) || Character.isDigit(c) || c == '$') {
+		while(Character.isLetter(c) || Character.isDigit(c) || c == '$' || c == '_') {
 			lexema.append(c);
 			c = this.fl.getNextChar();
 			
 		}
 		//t = new Token(TokenType.ID, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 		
-		Token t = tab.comparaID(lexema.toString(),this.fl.getLine(), this.fl.getColumn());
+		t = tab.comparaID(lexema.toString(),this.fl.getLine(), this.fl.getColumn());
 		
 		return t;
 	}
 
 	private Token processaNUM(char c, Token t) throws EOFException, IOException, ErroLexicoException {
 		
-		
+		t = new Token(TokenType.NUM_INT, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 		while(Character.isDigit(c) || c == 'E' || c == '+') {
 			c = this.fl.getNextChar();
 			lexema.append(c);
 			if(c == '.') {
+				t.setTokenType(TokenType.NUM_FLOAT);
 				while(Character.isDigit(c) || c == '.' || c == 'E' || c == '+') {
 					c = this.fl.getNextChar();
 					lexema.append(c);
-					t = new Token(TokenType.NUM_FLOAT, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
+					if(Character.isDigit(c) || c == '.') {
+						t.setLexema(lexema.toString());
+					}
 					if(c == '.' || (Character.isLetter(c) && c != 'E' )) {
 						while(Character.isLetter(c) || c == '.' || Character.isDigit(c)) {
 							c = this.fl.getNextChar();
@@ -210,8 +188,8 @@ public class Lexico {
 						throw new ErroLexicoException(c, lexema.toString());
 					}
 				}
-			}else {
-				t = new Token(TokenType.NUM_INT, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
+			} else if(Character.isDigit(c)) {
+				t.setLexema(lexema.toString());
 			}
 		}
 		
