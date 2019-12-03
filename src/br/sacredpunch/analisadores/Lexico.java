@@ -68,8 +68,8 @@ public class Lexico {
 					return t;
 				case '<':
 					while(c == '<') {
-						lexema.append(c);
 						c = this.fl.getNextChar();
+						lexema.append(c);
 					}
 					t = new Token(TokenType.ASSIGN, lexema.toString(), this.fl.getLine(), this.fl.getColumn());
 					return t;
@@ -143,7 +143,6 @@ public class Lexico {
 			} catch (ErroLexicoException ele) {
 				// Trata o erro l�xico (registra)
 				ErrorHandler.getInstance().printErrorReport(ele);
-				ele.printStackTrace();
 			}
 		}
 	}

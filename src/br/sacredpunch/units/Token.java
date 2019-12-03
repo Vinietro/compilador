@@ -52,8 +52,8 @@ public class Token {
 	
 	public void printToken() {
 		
-		System.out.println(this.getLin() + "     " + this.getCol() + "      | " 
-				+ this.getTokenType() + " | " + this.lexema.toString());
+		System.out.println("Linha: " + this.getLin() + " Coluna:" + this.getCol() + " Token: " 
+				+ this.getTokenType() + " Lexema: " + this.lexema.toString());
 	}
 	
 }
