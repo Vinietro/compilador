@@ -14,244 +14,541 @@ import br.sacredpunch.analisadores.ErroSintaticoException;
 
 public class Sintatico {
 	private Lexico lex;
-	
-	
+
 	private ErroLexicoException ele;
 	
+	private Token t;
+	private RuleType bloco;
+
 	Follow follow;
-	
+
 	public Sintatico(String filename) throws FileNotFoundException {
 		this.lex = new Lexico();
 		this.lex.getFileName(filename);
 	}
-	
+
 	public void processar() throws IOException, ErroSintaticoException {
-		//imprimir o cabeçalho de saída
-		//--------------------------------
-		//(lin, col) | Token   |Lexema
-		//Chama nextToken até que um EOF ocorra
+		// imprimir o cabeçalho de saída
+		// --------------------------------
+		// (lin, col) | Token |Lexema
+		// Chama nextToken até que um EOF ocorra
 		Token t = lex.nextToken();
-		while(t.getTokenType() != TokenType.EOF) {
+		while (t.getTokenType() != TokenType.EOF) {
 			loadS(t);
 			t.printToken();
 			t = lex.nextToken();
 		}
-		
-		
-		//Imprimir a tabela de símbolos
+
+		// Imprimir a tabela de símbolos
 		TabSimbolos.getInstance().printTabela();
-		
-		
-		//imprimir relatorio de erros
-		//ErrorHandler.getInstance().printErrorReport();
-		
-		
+
+		// imprimir relatorio de erros
+		// ErrorHandler.getInstance().printErrorReport();
+
+	}
+
+	private void storageToken(RuleType bloco, Token token) {
+		this.t = token;
+		this.bloco = bloco;
+	}
+
+	private Token getStorageToken() {
+		return this.t;
 	}
 
 	public void loadS(Token t) throws IOException, ErroSintaticoException {
-		if(t.getTokenType() == TokenType.PROGRAM) {
+		if (t.getTokenType() == TokenType.PROGRAM) {
 			t = lex.nextToken();
-			if(t.getTokenType() == TokenType.ID) {
+			if (t.getTokenType() == TokenType.ID) {
 				t = lex.nextToken();
-				if(t.getTokenType() == TokenType.TERM) {
+				if (t.getTokenType() == TokenType.TERM) {
 					loadBLOCO();
 					t = lex.nextToken();
-					if(t.getTokenType() == TokenType.END_PROG) {
-						
+					if (t.getTokenType() == TokenType.END_PROG) {
+
 						t = lex.nextToken();
-						
-						if(t.getTokenType() == TokenType.TERM) {
-							
-						}else {
+
+						if (t.getTokenType() == TokenType.TERM) {
+
+						} else {
 							ErrorHandler.getInstance().printErrorSintDefault(t.getTokenType(), t.getLexema());
 						}
-						
-					}else {
+
+					} else {
 						ErrorHandler.getInstance().printErrorSintDefault(t.getTokenType(), t.getLexema());
 					}
-					
-				}else {
+
+				} else {
 					ErrorHandler.getInstance().printErrorSintDefault(t.getTokenType(), t.getLexema());
 				}
-				
-			}else {
+
+			} else {
 				ErrorHandler.getInstance().printErrorSintDefault(t.getTokenType(), t.getLexema());
 			}
-			
-		}else {
+
+		} else {
 			ErrorHandler.getInstance().printErrorSintDefault(t.getTokenType(), t.getLexema());
 		}
 	}
-	
+
 	public void loadBLOCO() throws IOException, ErroSintaticoException {
 		Token t = lex.nextToken();
-		
-		if(t.getTokenType() == TokenType.BEGIN) {
+
+		if (t.getTokenType() == TokenType.BEGIN) {
 			// Regra 2
+			storageToken(RuleType.BLOCO, t);
 			loadCMDS();
 			t = lex.nextToken();
 			if (t.getTokenType() != TokenType.END) {
 				// ERRO
 				ErrorHandler.getInstance().printErrorSintDefault(t.getTokenType(), t.getLexema());
-			}else if((t.getTokenType() != TokenType.FOR) ||
-					 (t.getTokenType() != TokenType.WHILE) || 
-					 (t.getTokenType() != TokenType.ID) ||
-					 (t.getTokenType() != TokenType.DECLARE )){
-				// Regra 3
-				storageToken(RuleType.BLOCO,t.getTokenType());
-				loadCMD();
-								
 			}
-		}else {
+		} else if ((t.getTokenType() == TokenType.ID) || (t.getTokenType() == TokenType.IF)
+				|| (t.getTokenType() == TokenType.FOR) || (t.getTokenType() == TokenType.WHILE)
+				|| (t.getTokenType() == TokenType.DECLARE)) {
+			// Regra 3
+			storageToken(RuleType.BLOCO, t);
+			loadCMD();
+		} else {
 			// ERRO
 			ErrorHandler.getInstance().printErrorSintDefault(t.getTokenType(), t.getLexema());
-			
+
 		}
-		
-	}
-	
-	private void storageToken(RuleType bloco, TokenType token) {
-		
-		
+
 	}
 
 	public void loadCMDS() throws IOException, ErroSintaticoException {
-		Token t = lex.nextToken();
-		
-		if(t.getTokenType() == TokenType.DECLARE) {
+		Token t = getStorageToken();
+		if (t.getTokenType() == TokenType.DECLARE) {
+			storageToken(RuleType.CMDS, t);
 			loadDECL();
 			loadCMDS();
-		}else if(t.getTokenType() == TokenType.IF) {
+		} else if (t.getTokenType() == TokenType.IF) {
+			storageToken(RuleType.CMDS, t);
 			loadCOND();
 			loadCMDS();
-		}else if(t.getTokenType() == TokenType.FOR) {
+		} else if (t.getTokenType() == TokenType.FOR) {
+			storageToken(RuleType.CMDS, t);
 			loadREPF();
 			loadCMDS();
-		}else if(t.getTokenType() == TokenType.WHILE) {
+		} else if (t.getTokenType() == TokenType.WHILE) {
+			storageToken(RuleType.CMDS, t);
 			loadREPW();
 			loadCMDS();
-		}else if(t.getTokenType() == TokenType.ID) {
+		} else if (t.getTokenType() == TokenType.ID) {
+			storageToken(RuleType.CMDS, t);
 			loadATRIB();
 			loadCMDS();
-		}else if(follow.isFollowOf(RuleType.CMDS, t.getTokenType())) {
-			storageToken(RuleType.CMDS, t.getTokenType());
-		}else {
+		} else if (follow.isFollowOf(RuleType.CMDS, t.getTokenType())) {
+			storageToken(RuleType.CMDS, t);
+		} else {
 			throw new ErroSintaticoException(t.getTokenType());
 		}
 
 	}
-	
-	public void loadCMD() {
-		
-	}
-	
-	public void loadDECL() {
-		
-	}
-	
-	public void loadCOND() {
-		
-	}
-	
-	public void loadCNDB() throws IOException, ErroSintaticoException {
-		Token t = lex.nextToken();
-		if(t.getTokenType() == TokenType.ELSE) {
-			// Regra 16
-			loadBLOCO();
-		}else if(follow.isFollowOf(RuleType.BLOCO, t.getTokenType())) {
-			storageToken(RuleType.CNDB, t.getTokenType());
-		}else {
+
+	public void loadCMD() throws IOException, ErroSintaticoException {
+		Token t = getStorageToken();
+		if (t.getTokenType() == TokenType.DECLARE) {
+			storageToken(RuleType.CMD, t);
+			loadDECL();
+		} else if (t.getTokenType() == TokenType.IF) {
+			storageToken(RuleType.CMD, t);
+			loadCOND();
+		} else if ((t.getTokenType() == TokenType.FOR) || (t.getTokenType() == TokenType.WHILE)) {
+			storageToken(RuleType.CMD, t);
+			loadREP();
+		} else if (t.getTokenType() == TokenType.ID) {
+			storageToken(RuleType.CMD, t);
+			loadATRIB();
+		} else {
 			throw new ErroSintaticoException(t.getTokenType());
 		}
-		
-		
 	}
-	
-	public void loadATRIB() throws IOException {
-		Token t = lex.nextToken();
-		if(t.getTokenType() == TokenType.ID) {
+
+	public void loadDECL() throws IOException, ErroSintaticoException {
+		Token t = getStorageToken();
+		if (t.getTokenType() == TokenType.DECLARE) {
 			t = lex.nextToken();
-			if(t.getTokenType() == TokenType.ASSIGN) {
-				loadEXP();
+			if (t.getTokenType() == TokenType.ID) {
 				t = lex.nextToken();
-				if(t.getTokenType() == TokenType.TERM) {
+				if (t.getTokenType() == TokenType.TYPE) {
 					t = lex.nextToken();
-					storageToken(RuleType.ATRIB ,t.getTokenType());
+					if (t.getTokenType() == TokenType.TERM) {
+						storageToken(RuleType.DECL, t);
+					} else {
+						throw new ErroSintaticoException(t.getTokenType());
+					}
+				} else {
+					throw new ErroSintaticoException(t.getTokenType());
 				}
+			} else {
+				throw new ErroSintaticoException(t.getTokenType());
 			}
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
 		}
 	}
-	
-	public void loadEXP() {
-		
+
+	public void loadCOND() throws IOException, ErroSintaticoException {
+		Token t = getStorageToken();
+		if (t.getTokenType() == TokenType.IF) {
+			t = lex.nextToken();
+			if (t.getTokenType() == TokenType.L_PAR) {
+				storageToken(RuleType.COND, t);
+				loadEXPLO();
+				t = lex.nextToken();
+				if (t.getTokenType() == TokenType.R_PAR) {
+					t = lex.nextToken();
+					if (t.getTokenType() == TokenType.THEN) {
+						storageToken(RuleType.COND, t);
+						loadBLOCO();
+						loadCNDB();
+					} else {
+						throw new ErroSintaticoException(t.getTokenType());
+					}
+				} else {
+					throw new ErroSintaticoException(t.getTokenType());
+				}
+			} else {
+				throw new ErroSintaticoException(t.getTokenType());
+			}
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
+
 	}
-	
-	public void loadFID() {
-		
+
+	public void loadCNDB() throws IOException, ErroSintaticoException {
+		Token t = getStorageToken();
+		if (t.getTokenType() == TokenType.ELSE) {
+			loadBLOCO();
+		} else if (follow.isFollowOf(RuleType.CNDB, t.getTokenType())) {
+			storageToken(RuleType.CNDB, t);
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
+
 	}
-	
-	public void loadFOPNUM() {
-		
+
+	public void loadATRIB() throws IOException, ErroSintaticoException {
+		Token t = getStorageToken();
+		if (t.getTokenType() == TokenType.ID) {
+			t = lex.nextToken();
+			if (t.getTokenType() == TokenType.ASSIGN) {
+				storageToken(RuleType.ATRIB, t);
+				loadEXP();
+				t = lex.nextToken();
+				if (t.getTokenType() == TokenType.TERM) {
+					storageToken(RuleType.ATRIB, t);
+				} else {
+					throw new ErroSintaticoException(t.getTokenType());
+				}
+			} else {
+				throw new ErroSintaticoException(t.getTokenType());
+			}
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadFEXPNUM_1() {
-		
+
+	public void loadEXP() throws ErroSintaticoException, IOException {
+		Token t = lex.nextToken();
+		if (t.getTokenType() == TokenType.LOGIC_VAL) {
+			storageToken(RuleType.EXP, t);
+			loadFVALLOG();
+		} else if (t.getTokenType() == TokenType.ID) {
+			storageToken(RuleType.EXP, t);
+			loadFID();
+		} else if ((t.getTokenType() == TokenType.NUM_INT) || (t.getTokenType() == TokenType.NUM_FLOAT)) {
+			storageToken(RuleType.EXP, t);
+			loadFNUM();
+		} else if (t.getTokenType() == TokenType.L_PAR) {
+			storageToken(RuleType.EXP, t);
+			loadFLPAR();
+		} else if (t.getTokenType() == TokenType.LITERAL) {
+			storageToken(RuleType.EXP, t);
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
+
 	}
-	
-	public void loadFNUM() {
-		
+
+	public void loadFID() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if (t.getTokenType() == TokenType.LOGIC_OP) {
+			storageToken(RuleType.FID, t);
+			loadFVALLOG();
+		} else if ((t.getTokenType() == TokenType.ARIT_AS) || (t.getTokenType() == TokenType.ARIT_MD)) {
+			storageToken(RuleType.FID, t);
+			loadOPNUM();
+			loadFOPNUM();
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadFLPAR() {
-		
+
+	public void loadFOPNUM() throws ErroSintaticoException, IOException {
+		Token t = lex.nextToken();
+		if ((t.getTokenType() == TokenType.NUM_INT) || (t.getTokenType() == TokenType.NUM_FLOAT)
+				|| (t.getTokenType() == TokenType.ID) || (t.getTokenType() == TokenType.L_PAR)) {
+			storageToken(RuleType.FOPNUM, t);
+			loadEXPNUM();
+			loadFEXPNUM_1();
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
+
 	}
-	
-	public void loadFEXPNUM() {
-		
+
+	public void loadFEXPNUM_1() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if (t.getTokenType() == TokenType.RELOP) {
+			storageToken(RuleType.FEXPNUM_1, t);
+			loadEXPNUM();
+		} else if (t.getTokenType() == TokenType.TERM) {
+			storageToken(RuleType.FEXPNUM_1, t);
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadFRPAR() {
-		
+
+	public void loadFNUM() throws ErroSintaticoException, IOException {
+		Token t = lex.nextToken();
+		if ((t.getTokenType() == TokenType.ARIT_AS) || (t.getTokenType() == TokenType.ARIT_MD)) {
+			storageToken(RuleType.FNUM, t);
+			loadOPNUM();
+			loadFOPNUM();
+		} else if (t.getTokenType() == TokenType.TERM) {
+			storageToken(RuleType.FNUM, t);
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadEXPLO() {
-		
+
+	public void loadFLPAR() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if ((t.getTokenType() == TokenType.NUM_INT) || (t.getTokenType() == TokenType.NUM_FLOAT)
+				|| (t.getTokenType() == TokenType.ID) || (t.getTokenType() == TokenType.L_PAR)) {
+			storageToken(RuleType.FLPAR, t);
+			loadEXPNUM();
+			loadFEXPNUM();
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadFID_1() {
-		
+
+	public void loadFEXPNUM() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if (t.getTokenType() == TokenType.R_PAR) {
+			storageToken(RuleType.FEXPNUM, t);
+			loadFRPAR();
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadFVALLOG() {
-		
+
+	public void loadFRPAR() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if (t.getTokenType() == TokenType.RELOP) {
+			storageToken(RuleType.FRPAR, t);
+			loadEXPNUM();
+		} else if (t.getTokenType() == TokenType.TERM) {
+			storageToken(RuleType.FRPAR, t);
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadEXPNUM() {
-		
+
+	public void loadEXPLO() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if (t.getTokenType() == TokenType.LOGIC_VAL) {
+			storageToken(RuleType.EXPLO, t);
+			loadFVALLOG();
+		} else if (t.getTokenType() == TokenType.ID) {
+			storageToken(RuleType.EXPLO, t);
+			loadFID_1();
+		} else if ((t.getTokenType() == TokenType.NUM_INT) || (t.getTokenType() == TokenType.NUM_FLOAT)) {
+			storageToken(RuleType.EXPLO, t);
+			loadOPNUM();
+			loadEXPNUM();
+			t = lex.nextToken();
+			if (t.getTokenType() == TokenType.RELOP) {
+				storageToken(RuleType.EXPLO, t);
+				loadEXPNUM();
+			} else {
+				throw new ErroSintaticoException(t.getTokenType());
+			}
+		} else if (t.getTokenType() == TokenType.L_PAR) {
+			storageToken(RuleType.EXPLO, t);
+			loadEXPNUM();
+			t = lex.nextToken();
+			if (t.getTokenType() == TokenType.R_PAR) {
+				t = lex.nextToken();
+				if (t.getTokenType() == TokenType.RELOP) {
+					storageToken(RuleType.EXPLO, t);
+					loadEXPNUM();
+				} else {
+					throw new ErroSintaticoException(t.getTokenType());
+				}
+			} else {
+				throw new ErroSintaticoException(t.getTokenType());
+			}
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
+
 	}
-	
-	public void loadXEXPNUM() {
-		
+
+	public void loadFID_1() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if (t.getTokenType() == TokenType.LOGIC_OP) {
+			storageToken(RuleType.FID_1, t);
+			loadFVALLOG();
+		} else if (t.getTokenType() == TokenType.RELOP) {
+			storageToken(RuleType.FID_1, t);
+			loadEXPNUM();
+		} else if ((t.getTokenType() == TokenType.ARIT_AS) || (t.getTokenType() == TokenType.ARIT_MD)) {
+			storageToken(RuleType.FID_1, t);
+			loadOPNUM();
+			loadEXPNUM();
+			t = lex.nextToken();
+			if (t.getTokenType() == TokenType.RELOP) {
+				storageToken(RuleType.FID_1, t);
+				loadEXPNUM();
+			} else {
+				throw new ErroSintaticoException(t.getTokenType());
+			}
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadOPNUM() {
-		
+
+	public void loadFVALLOG() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if (t.getTokenType() == TokenType.LOGIC_OP) {
+			storageToken(RuleType.FVALLOG, t);
+			loadEXPLO();
+		} else if ((t.getTokenType() == TokenType.R_PAR) || (t.getTokenType() == TokenType.TERM)) {
+			storageToken(RuleType.FVALLOG, t);
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadVAL() {
-		
+
+	public void loadEXPNUM() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if ((t.getTokenType() == TokenType.NUM_INT) || (t.getTokenType() == TokenType.NUM_FLOAT)
+				|| (t.getTokenType() == TokenType.ID)) {
+			storageToken(RuleType.EXPNUM, t);
+			loadVAL();
+			loadXEXPNUM();
+		} else if (t.getTokenType() == TokenType.L_PAR) {
+			storageToken(RuleType.EXPNUM, t);
+			loadEXPNUM();
+			t = lex.nextToken();
+			if (t.getTokenType() == TokenType.R_PAR) {
+				storageToken(RuleType.EXPNUM, t);
+			} else {
+				throw new ErroSintaticoException(t.getTokenType());
+			}
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadREP() {
-		
+
+	public void loadXEXPNUM() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if ((t.getTokenType() == TokenType.ARIT_AS) || (t.getTokenType() == TokenType.ARIT_MD)) {
+			storageToken(RuleType.XEXPNUM, t);
+			loadOPNUM();
+			loadEXPNUM();
+		} else if ((t.getTokenType() == TokenType.ID) || (t.getTokenType() == TokenType.RELOP)
+				|| (t.getTokenType() == TokenType.TERM) || (t.getTokenType() == TokenType.R_PAR)
+				|| (t.getTokenType() == TokenType.BEGIN) || (t.getTokenType() == TokenType.IF)
+				|| (t.getTokenType() == TokenType.FOR) || (t.getTokenType() == TokenType.WHILE)
+				|| (t.getTokenType() == TokenType.DECLARE) || (t.getTokenType() == TokenType.TO)) {
+			storageToken(RuleType.XEXPNUM, t);
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadREPF() {
-		
+
+	public void loadOPNUM() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if ((t.getTokenType() == TokenType.ARIT_AS) || (t.getTokenType() == TokenType.ARIT_MD)) {
+			storageToken(RuleType.OPNUM, t);
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
-	public void loadREPW() {
-		
+
+	public void loadVAL() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if ((t.getTokenType() == TokenType.ID) || (t.getTokenType() == TokenType.NUM_INT)
+				|| (t.getTokenType() == TokenType.NUM_FLOAT)) {
+			storageToken(RuleType.VAL, t);
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
 	}
-	
+
+	public void loadREP() throws IOException, ErroSintaticoException {
+		Token t = lex.nextToken();
+		if (t.getTokenType() == TokenType.FOR) {
+			storageToken(RuleType.REP, t);
+			loadREPF();
+		} else if (t.getTokenType() == TokenType.WHILE) {
+			storageToken(RuleType.REP, t);
+			loadREPW();
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
+	}
+
+	public void loadREPF() throws IOException, ErroSintaticoException {
+		Token t = getStorageToken();
+		if (t.getTokenType() == TokenType.FOR) {
+			t = lex.nextToken();
+			if (t.getTokenType() == TokenType.ID) {
+				storageToken(RuleType.REPF, t);
+				loadEXPNUM();
+				t = lex.nextToken();
+				if (t.getTokenType() == TokenType.TO) {
+					storageToken(RuleType.REPF, t);
+					loadEXPNUM();
+					loadBLOCO();
+				} else {
+					throw new ErroSintaticoException(t.getTokenType());
+				}
+			} else {
+				throw new ErroSintaticoException(t.getTokenType());
+			}
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
+	}
+
+	public void loadREPW() throws IOException, ErroSintaticoException {
+		Token t = getStorageToken();
+		if (t.getTokenType() == TokenType.WHILE) {
+			t = lex.nextToken();
+			if (t.getTokenType() == TokenType.L_PAR) {
+				storageToken(RuleType.REPW, t);
+				loadEXPLO();
+				t = lex.nextToken();
+				if (t.getTokenType() == TokenType.R_PAR) {
+					storageToken(RuleType.REPW, t);
+					loadBLOCO();
+				} else {
+					throw new ErroSintaticoException(t.getTokenType());
+				}
+			} else {
+				throw new ErroSintaticoException(t.getTokenType());
+			}
+		} else {
+			throw new ErroSintaticoException(t.getTokenType());
+		}
+	}
+
 }
