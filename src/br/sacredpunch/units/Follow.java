@@ -213,7 +213,9 @@ public class Follow {
 			tabela.put(this.rule, token);
 			
 		}else if(this.rule == RuleType.VAL){
-			//opAddSub opMultDiv?? relop to begin declare if id for while term rpar
+			//relop to begin declare if id for while term rpar
+			token.add(TokenType.ARIT_AS);
+			token.add(TokenType.ARIT_MD);
 			token.add(TokenType.RELOP);
 			token.add(TokenType.TO);
 			token.add(TokenType.BEGIN);
@@ -271,12 +273,8 @@ public class Follow {
 	}
 	
 	
-	public Boolean isFollowOf(RuleType rule, TokenType token) {
-		
-		this.rule = rule;
-		
-		
-	  return null;
+	public Boolean isFollowOf(RuleType rule, TokenType token) {		
+	  return tabela.get(rule).contains(token);
 	}
 
 }
