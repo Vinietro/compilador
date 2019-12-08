@@ -242,7 +242,7 @@ public class Follow {
 			tabela.put(this.rule, token);
 			
 		}else if(this.rule == RuleType.REPF){
-			//declare if for while id end end_prog else
+			//declare if for while id end end_prog else 
 			token.add(TokenType.DECLARE);
 			token.add(TokenType.IF);
 			token.add(TokenType.FOR);
