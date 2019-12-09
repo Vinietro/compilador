@@ -139,7 +139,7 @@ public class Sintatico {
 			storageToken(RuleType.CMDS, t);
 			loadATRIB();
 			loadCMDS();
-		} else if (follow.isFollowOf(RuleType.CMDS, t.getTokenType())) {
+		} else if (follow.isFollowOf(RuleType.CMDS)) {
 			storageToken(RuleType.CMDS, t);
 		} else {
 			throw new ErroSintaticoException(t.getTokenType());
@@ -223,8 +223,9 @@ public class Sintatico {
 		Token t = getStorageToken();
 		if (t.getTokenType() == TokenType.ELSE) {
 			loadBLOCO();
-		} else if (follow.isFollowOf(RuleType.CNDB, t.getTokenType())) {
+		} else if (follow.isFollowOf(RuleType.CNDB)) {
 			storageToken(RuleType.CNDB, t);
+			follow.token.clear();
 		} else {
 			throw new ErroSintaticoException(t.getTokenType());
 		}

@@ -9,272 +9,288 @@ import br.sacredpunch.units.TokenType;
 
 public class Follow {
 	
-	private RuleType rule;
-	
 	private static Follow instance = new Follow();
 	
-	private ArrayList<TokenType> token;
+	public ArrayList<String> token;
 	
-	private Map<RuleType, ArrayList<TokenType>> tabela;
+	private TokenType tokenType;
 	
-	private Follow() {
-		tabela = new HashMap<RuleType, ArrayList<TokenType>>();
+	private String[] strCarga = new String[this.token.size()];
 	
-		//declare if for while id end end_prog else
-		if(this.rule == RuleType.BLOCO) {
-		token.add(TokenType.DECLARE);
-		token.add(TokenType.IF);
-		token.add(TokenType.FOR);
-		token.add(TokenType.WHILE);
-		token.add(TokenType.ID);
-		token.add(TokenType.END);
-		token.add(TokenType.END_PROG);
-		token.add(TokenType.ELSE);
+	public Follow() {
 		
-		tabela.put(this.rule, token);
-		
-		}else if(this.rule == RuleType.CMDS) {
-			token.add(TokenType.END);
+	}
+	
+	
+	private void putToken(RuleType rule) {
+		if(rule == RuleType.BLOCO) {
+			this.token.add(TokenType.DECLARE.toString());
+			this.token.add(TokenType.IF.toString());
+			this.token.add(TokenType.FOR.toString());
+			this.token.add(TokenType.WHILE.toString());
+			this.token.add(TokenType.ID.toString());
+			this.token.add(TokenType.END.toString());
+			this.token.add(TokenType.END_PROG.toString());
+			this.token.add(TokenType.ELSE.toString());
 			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.CMD) {
-			//declare if for while id end end_prog else
-			token.add(TokenType.DECLARE);
-			token.add(TokenType.IF);
-			token.add(TokenType.FOR);
-			token.add(TokenType.WHILE);
-			token.add(TokenType.ID);
-			token.add(TokenType.END);
-			token.add(TokenType.END_PROG);
-			token.add(TokenType.ELSE);
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.DECL){
-			//declare if for while id end end_prog else
-			token.add(TokenType.DECLARE);
-			token.add(TokenType.IF);
-			token.add(TokenType.FOR);
-			token.add(TokenType.WHILE);
-			token.add(TokenType.ID);
-			token.add(TokenType.END);
-			token.add(TokenType.END_PROG);
-			token.add(TokenType.ELSE);
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.COND){
-			//declare if for while id end end_prog else
-			token.add(TokenType.DECLARE);
-			token.add(TokenType.IF);
-			token.add(TokenType.FOR);
-			token.add(TokenType.WHILE);
-			token.add(TokenType.ID);
-			token.add(TokenType.END);
-			token.add(TokenType.END_PROG);
-			token.add(TokenType.ELSE);
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.CNDB){
-			//declare if for while id end end_prog else
-			token.add(TokenType.DECLARE);
-			token.add(TokenType.IF);
-			token.add(TokenType.FOR);
-			token.add(TokenType.WHILE);
-			token.add(TokenType.ID);
-			token.add(TokenType.END);
-			token.add(TokenType.END_PROG);
-			token.add(TokenType.ELSE);
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.ATRIB){
-			//declare if for while id end end_prog else
-			token.add(TokenType.DECLARE);
-			token.add(TokenType.IF);
-			token.add(TokenType.FOR);
-			token.add(TokenType.WHILE);
-			token.add(TokenType.ID);
-			token.add(TokenType.END);
-			token.add(TokenType.END_PROG);
-			token.add(TokenType.ELSE);
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.EXP){
-			//term
-			token.add(TokenType.TERM);			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.FID){
-			//term
-			token.add(TokenType.TERM);			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.FOPNUM){
-			//term
-			token.add(TokenType.TERM);			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.FEXPNUM_1){
-			//term
-			token.add(TokenType.TERM);			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.FNUM){
-			//term
-			token.add(TokenType.TERM);			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.FLPAR){
-			//term
-			token.add(TokenType.TERM);			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.FEXPNUM){
-			//term
-			token.add(TokenType.TERM);			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.FRPAR){
-			//term
-			token.add(TokenType.TERM);			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.EXPLO){
-			//term rpar
-			token.add(TokenType.TERM);			
-			token.add(TokenType.R_PAR);
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.FID_1){
-			//term rpar
-			token.add(TokenType.TERM);			
-			token.add(TokenType.R_PAR);
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.FVALLOG){
-			//term rpar
-			token.add(TokenType.TERM);			
-			token.add(TokenType.R_PAR);
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.EXPNUM){
-			//relop to begin declare if id for while term rpar
-			token.add(TokenType.RELOP);			
-			token.add(TokenType.TO);
-			token.add(TokenType.BEGIN);
-			token.add(TokenType.DECLARE);
-			token.add(TokenType.IF);
-			token.add(TokenType.ID);
-			token.add(TokenType.FOR);
-			token.add(TokenType.WHILE);
-			token.add(TokenType.TERM);
-			token.add(TokenType.R_PAR);
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.XEXPNUM){
-			//relop to begin declare if id for while term rpar
-			token.add(TokenType.RELOP);			
-			token.add(TokenType.TO);
-			token.add(TokenType.BEGIN);
-			token.add(TokenType.DECLARE);
-			token.add(TokenType.IF);
-			token.add(TokenType.ID);
-			token.add(TokenType.FOR);
-			token.add(TokenType.WHILE);
-			token.add(TokenType.TERM);
-			token.add(TokenType.R_PAR);
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.OPNUM){
-			//lpar id num_int num_float
-			token.add(TokenType.L_PAR);
-			token.add(TokenType.ID);
-			token.add(TokenType.NUM_INT);
-			token.add(TokenType.NUM_FLOAT);
-			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.VAL){
-			//relop to begin declare if id for while term rpar
-			token.add(TokenType.ARIT_AS);
-			token.add(TokenType.ARIT_MD);
-			token.add(TokenType.RELOP);
-			token.add(TokenType.TO);
-			token.add(TokenType.BEGIN);
-			token.add(TokenType.DECLARE);
-			token.add(TokenType.IF);
-			token.add(TokenType.ID);
-			token.add(TokenType.FOR);
-			token.add(TokenType.WHILE);
-			token.add(TokenType.TERM);
-			token.add(TokenType.R_PAR);
-			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.REP){
-			//declare if for while id end end_prog else
-			token.add(TokenType.DECLARE);
-			token.add(TokenType.IF);
-			token.add(TokenType.FOR);
-			token.add(TokenType.WHILE);
-			token.add(TokenType.ID);
-			token.add(TokenType.END);
-			token.add(TokenType.END_PROG);
-			token.add(TokenType.ELSE);			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.REPF){
-			//declare if for while id end end_prog else 
-			token.add(TokenType.DECLARE);
-			token.add(TokenType.IF);
-			token.add(TokenType.FOR);
-			token.add(TokenType.WHILE);
-			token.add(TokenType.ID);
-			token.add(TokenType.END);
-			token.add(TokenType.END_PROG);
-			token.add(TokenType.ELSE);			
-			
-			tabela.put(this.rule, token);
-			
-		}else if(this.rule == RuleType.REPW){
-			//declare if for while id end end_prog else
-			token.add(TokenType.DECLARE);
-			token.add(TokenType.IF);
-			token.add(TokenType.FOR);
-			token.add(TokenType.WHILE);
-			token.add(TokenType.ID);
-			token.add(TokenType.END);
-			token.add(TokenType.END_PROG);
-			token.add(TokenType.ELSE);			
-			
-			tabela.put(this.rule, token);
-			
+			}else if(rule == RuleType.CMDS) {
+				this.token.add(TokenType.END.toString());
+				
+			}else if(rule == RuleType.CMD) {
+				//declare if for while id end end_prog else
+				this.token.add(TokenType.DECLARE.toString());
+				this.token.add(TokenType.IF.toString());
+				this.token.add(TokenType.FOR.toString());
+				this.token.add(TokenType.WHILE.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.END.toString());
+				this.token.add(TokenType.END_PROG.toString());
+				this.token.add(TokenType.ELSE.toString());
+				
+			}else if(rule == RuleType.DECL){
+				//declare if for while id end end_prog else
+				this.token.add(TokenType.DECLARE.toString());
+				this.token.add(TokenType.IF.toString());
+				this.token.add(TokenType.FOR.toString());
+				this.token.add(TokenType.WHILE.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.END.toString());
+				this.token.add(TokenType.END_PROG.toString());
+				this.token.add(TokenType.ELSE.toString());
+				
+			}else if(rule == RuleType.COND){
+				//declare if for while id end end_prog else
+				this.token.add(TokenType.DECLARE.toString());
+				this.token.add(TokenType.IF.toString());
+				this.token.add(TokenType.FOR.toString());
+				this.token.add(TokenType.WHILE.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.END.toString());
+				this.token.add(TokenType.END_PROG.toString());
+				this.token.add(TokenType.ELSE.toString());
+				
+			}else if(rule == RuleType.CNDB){
+				//declare if for while id end end_prog else
+				this.token.add(TokenType.DECLARE.toString());
+				this.token.add(TokenType.IF.toString());
+				this.token.add(TokenType.FOR.toString());
+				this.token.add(TokenType.WHILE.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.END.toString());
+				this.token.add(TokenType.END_PROG.toString());
+				this.token.add(TokenType.ELSE.toString());
+				
+				
+			}else if(rule == RuleType.ATRIB){
+				//declare if for while id end end_prog else
+				this.token.add(TokenType.DECLARE.toString());
+				this.token.add(TokenType.IF.toString());
+				this.token.add(TokenType.FOR.toString());
+				this.token.add(TokenType.WHILE.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.END.toString());
+				this.token.add(TokenType.END_PROG.toString());
+				this.token.add(TokenType.ELSE.toString());
+				
+			}else if(rule == RuleType.EXP){
+				//term
+				this.token.add(TokenType.TERM.toString());			
+				
+			}else if(rule == RuleType.FID){
+				//term		
+				
+				this.token.add(TokenType.TERM.toString());
+				
+			}else if(rule == RuleType.FOPNUM){
+				//term
+				this.token.add(TokenType.TERM.toString());			
+				
+				
+			}else if(rule == RuleType.FEXPNUM_1){
+				//term
+				this.token.add(TokenType.TERM.toString());			
+				
+			}else if(rule == RuleType.FNUM){
+				//term
+				this.token.add(TokenType.TERM.toString());			
+				
+			}else if(rule == RuleType.FLPAR){
+				//term
+				this.token.add(TokenType.TERM.toString());			
+				
+			}else if(rule == RuleType.FEXPNUM){
+				//term
+				this.token.add(TokenType.TERM.toString());			
+				
+			}else if(rule == RuleType.FRPAR){
+				//term
+				this.token.add(TokenType.TERM.toString());			
+				
+			}else if(rule == RuleType.EXPLO){
+				//term rpar
+				this.token.add(TokenType.TERM.toString());			
+				this.token.add(TokenType.R_PAR.toString());
+				
+			}else if(rule == RuleType.FID_1){
+				//term rpar
+				this.token.add(TokenType.TERM.toString());			
+				this.token.add(TokenType.R_PAR.toString());
+				
+			}else if(rule == RuleType.FVALLOG){
+				//term rpar
+				this.token.add(TokenType.TERM.toString());			
+				this.token.add(TokenType.R_PAR.toString());
+				
+			}else if(rule == RuleType.EXPNUM){
+				//relop to begin declare if id for while term rpar
+				this.token.add(TokenType.RELOP.toString());			
+				this.token.add(TokenType.TO.toString());
+				this.token.add(TokenType.BEGIN.toString());
+				this.token.add(TokenType.DECLARE.toString());
+				this.token.add(TokenType.IF.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.FOR.toString());
+				this.token.add(TokenType.WHILE.toString());
+				this.token.add(TokenType.TERM.toString());
+				this.token.add(TokenType.R_PAR.toString());
+				
+			}else if(rule == RuleType.XEXPNUM){
+				//relop to begin declare if id for while term rpar
+				this.token.add(TokenType.RELOP.toString());			
+				this.token.add(TokenType.TO.toString());
+				this.token.add(TokenType.BEGIN.toString());
+				this.token.add(TokenType.DECLARE.toString());
+				this.token.add(TokenType.IF.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.FOR.toString());
+				this.token.add(TokenType.WHILE.toString());
+				this.token.add(TokenType.TERM.toString());
+				this.token.add(TokenType.R_PAR.toString());
+				
+			}else if(rule == RuleType.OPNUM){
+				//lpar id num_int num_float
+				this.token.add(TokenType.L_PAR.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.NUM_INT.toString());
+				this.token.add(TokenType.NUM_FLOAT.toString());
+				
+			}else if(rule == RuleType.VAL){
+				//relop to begin declare if id for while term rpar
+				this.token.add(TokenType.ARIT_AS.toString());
+				this.token.add(TokenType.ARIT_MD.toString());
+				this.token.add(TokenType.RELOP.toString());
+				this.token.add(TokenType.TO.toString());
+				this.token.add(TokenType.BEGIN.toString());
+				this.token.add(TokenType.DECLARE.toString());
+				this.token.add(TokenType.IF.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.FOR.toString());
+				this.token.add(TokenType.WHILE.toString());
+				this.token.add(TokenType.TERM.toString());
+				this.token.add(TokenType.R_PAR.toString());
+				
+			}else if(rule == RuleType.REP){
+				//declare if for while id end end_prog else
+				this.token.add(TokenType.DECLARE.toString());
+				this.token.add(TokenType.IF.toString());
+				this.token.add(TokenType.FOR.toString());
+				this.token.add(TokenType.WHILE.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.END.toString());
+				this.token.add(TokenType.END_PROG.toString());
+				this.token.add(TokenType.ELSE.toString());			
+				
+			}else if(rule == RuleType.REPF){
+				//declare if for while id end end_prog else 
+				this.token.add(TokenType.DECLARE.toString());
+				this.token.add(TokenType.IF.toString());
+				this.token.add(TokenType.FOR.toString());
+				this.token.add(TokenType.WHILE.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.END.toString());
+				this.token.add(TokenType.END_PROG.toString());
+				this.token.add(TokenType.ELSE.toString());
+				
+			}else if(rule == RuleType.REPW){
+				//declare if for while id end end_prog else
+				this.token.add(TokenType.DECLARE.toString());
+				this.token.add(TokenType.IF.toString());
+				this.token.add(TokenType.FOR.toString());
+				this.token.add(TokenType.WHILE.toString());
+				this.token.add(TokenType.ID.toString());
+				this.token.add(TokenType.END.toString());
+				this.token.add(TokenType.END_PROG.toString());
+				this.token.add(TokenType.ELSE.toString());			
+			}
+	
+	}
+	
+	
+	public static Follow getInstance() {
+		return instance;
+	}
+	
+	
+	private void ordenaTokens() {
+		for(int i = 0; i < this.token.size(); i++) {
+			for(int j = 1; j < this.token.size(); j++) {
+				
+				if(this.token.get(i).length() < this.token.get(j).length()) {
+					this.strCarga[i] = this.token.get(j);
+					this.strCarga[j] = this.token.get(i);
+				}
+			}
 		}
 	}
 	
 	
-	public Boolean isFollowOf(RuleType rule, TokenType token) {		
-	  return tabela.get(rule).contains(token);
+	public Boolean isFollowOf(RuleType rule) {	
+		
+		putToken(rule);
+		
+		ordenaTokens();
+		
+		buscaTokens();
+		
+		if(buscaTokens()) {
+			return true;
+		}else {
+			return false;
+		}
+		
+	}
+
+
+	private boolean buscaTokens() {
+		
+		/*int meio;
+	int inicio = 0;
+	int fim = dados.length-1;
+	while (inicio <= fim) {
+	         meio = (inicio + fim)/2;
+	         if (x == dados[meio])
+	                  return true;
+	         if (x < dados[meio])
+	                  fim = meio - 1;
+	         else
+	                  inicio = meio + 1;
+	}*/
+		int x = 0;
+		int meio;
+		int inicio = 0;
+		int fim = this.strCarga.length;	
+		while(inicio <= fim) {
+			meio = (inicio + fim)/2;
+			if(this.strCarga[x] == this.strCarga[meio]) {
+				return true;
+			}else if(this.strCarga[x].length() < this.strCarga[meio].length()) {
+				fim = meio - 1;
+			}else if(this.strCarga[x].length() > this.strCarga[meio].length()){
+				inicio = meio + 1;
+			}
+				
+		}
+		return false;
 	}
 
 }
