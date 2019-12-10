@@ -20,31 +20,20 @@ public class Sintatico {
 	private Token t;
 	private RuleType bloco;
 
-	Follow follow;
+	Follow follow = Follow.getInstance();
 
 	public Sintatico(String filename) throws FileNotFoundException {
 		this.lex = new Lexico();
 		this.lex.getFileName(filename);
+		
 	}
 
 	public void processar() throws IOException, ErroSintaticoException {
-		// imprimir o cabeçalho de saída
-		// --------------------------------
-		// (lin, col) | Token |Lexema
-		// Chama nextToken até que um EOF ocorra
 		Token t = lex.nextToken();
 		while (t.getTokenType() != TokenType.EOF) {
 			loadS(t);
-			t.printToken();
 			t = lex.nextToken();
-		}
-
-		// Imprimir a tabela de símbolos
-		TabSimbolos.getInstance().printTabela();
-
-		// imprimir relatorio de erros
-		// ErrorHandler.getInstance().printErrorReport();
-
+		}	
 	}
 
 	private void storageToken(RuleType bloco, Token token) {
@@ -65,11 +54,9 @@ public class Sintatico {
 					loadBLOCO();
 					t = lex.nextToken();
 					if (t.getTokenType() == TokenType.END_PROG) {
-
 						t = lex.nextToken();
-
 						if (t.getTokenType() == TokenType.TERM) {
-
+							System.out.printf("Programa compilado com sucesso!");
 						} else {
 							ErrorHandler.getInstance().printErrorSintDefault(t.getTokenType(), t.getLexema());
 						}
@@ -96,6 +83,7 @@ public class Sintatico {
 
 		if (t.getTokenType() == TokenType.BEGIN) {
 			// Regra 2
+			lex.nextToken();
 			storageToken(RuleType.BLOCO, t);
 			loadCMDS();
 			t = lex.nextToken();
@@ -139,10 +127,10 @@ public class Sintatico {
 			storageToken(RuleType.CMDS, t);
 			loadATRIB();
 			loadCMDS();
-		} else if (follow.isFollowOf(RuleType.CMDS)) {
+		} else if (follow.isFollowOf(RuleType.CMDS, t.getTokenType())) {
 			storageToken(RuleType.CMDS, t);
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 
 	}
@@ -162,7 +150,7 @@ public class Sintatico {
 			storageToken(RuleType.CMD, t);
 			loadATRIB();
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -177,16 +165,16 @@ public class Sintatico {
 					if (t.getTokenType() == TokenType.TERM) {
 						storageToken(RuleType.DECL, t);
 					} else {
-						throw new ErroSintaticoException(t.getTokenType());
+						throw new ErroSintaticoException(t);
 					}
 				} else {
-					throw new ErroSintaticoException(t.getTokenType());
+					throw new ErroSintaticoException(t);
 				}
 			} else {
-				throw new ErroSintaticoException(t.getTokenType());
+				throw new ErroSintaticoException(t);
 			}
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -205,16 +193,16 @@ public class Sintatico {
 						loadBLOCO();
 						loadCNDB();
 					} else {
-						throw new ErroSintaticoException(t.getTokenType());
+						throw new ErroSintaticoException(t);
 					}
 				} else {
-					throw new ErroSintaticoException(t.getTokenType());
+					throw new ErroSintaticoException(t);
 				}
 			} else {
-				throw new ErroSintaticoException(t.getTokenType());
+				throw new ErroSintaticoException(t);
 			}
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 
 	}
@@ -223,11 +211,10 @@ public class Sintatico {
 		Token t = getStorageToken();
 		if (t.getTokenType() == TokenType.ELSE) {
 			loadBLOCO();
-		} else if (follow.isFollowOf(RuleType.CNDB)) {
+		} else if (follow.isFollowOf(RuleType.CNDB, t.getTokenType())) {
 			storageToken(RuleType.CNDB, t);
-			follow.token.clear();
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 
 	}
@@ -243,13 +230,13 @@ public class Sintatico {
 				if (t.getTokenType() == TokenType.TERM) {
 					storageToken(RuleType.ATRIB, t);
 				} else {
-					throw new ErroSintaticoException(t.getTokenType());
+					throw new ErroSintaticoException(t);
 				}
 			} else {
-				throw new ErroSintaticoException(t.getTokenType());
+				throw new ErroSintaticoException(t);
 			}
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -270,7 +257,7 @@ public class Sintatico {
 		} else if (t.getTokenType() == TokenType.LITERAL) {
 			storageToken(RuleType.EXP, t);
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 
 	}
@@ -284,8 +271,10 @@ public class Sintatico {
 			storageToken(RuleType.FID, t);
 			loadOPNUM();
 			loadFOPNUM();
+		}else if (follow.isFollowOf(RuleType.FID, t.getTokenType())) {
+			storageToken(RuleType.FID, t);
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -297,7 +286,7 @@ public class Sintatico {
 			loadEXPNUM();
 			loadFEXPNUM_1();
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 
 	}
@@ -309,8 +298,10 @@ public class Sintatico {
 			loadEXPNUM();
 		} else if (t.getTokenType() == TokenType.TERM) {
 			storageToken(RuleType.FEXPNUM_1, t);
+		}else if (follow.isFollowOf(RuleType.FEXPNUM_1, t.getTokenType())) {
+			storageToken(RuleType.FEXPNUM_1, t);
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -322,8 +313,10 @@ public class Sintatico {
 			loadFOPNUM();
 		} else if (t.getTokenType() == TokenType.TERM) {
 			storageToken(RuleType.FNUM, t);
+		}else if (follow.isFollowOf(RuleType.FNUM, t.getTokenType())) {
+			storageToken(RuleType.FNUM, t);
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -335,7 +328,7 @@ public class Sintatico {
 			loadEXPNUM();
 			loadFEXPNUM();
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -345,7 +338,7 @@ public class Sintatico {
 			storageToken(RuleType.FEXPNUM, t);
 			loadFRPAR();
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -356,8 +349,10 @@ public class Sintatico {
 			loadEXPNUM();
 		} else if (t.getTokenType() == TokenType.TERM) {
 			storageToken(RuleType.FRPAR, t);
+		}else if (follow.isFollowOf(RuleType.FRPAR, t.getTokenType())) {
+			storageToken(RuleType.FRPAR, t);
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -378,7 +373,7 @@ public class Sintatico {
 				storageToken(RuleType.EXPLO, t);
 				loadEXPNUM();
 			} else {
-				throw new ErroSintaticoException(t.getTokenType());
+				throw new ErroSintaticoException(t);
 			}
 		} else if (t.getTokenType() == TokenType.L_PAR) {
 			storageToken(RuleType.EXPLO, t);
@@ -390,13 +385,13 @@ public class Sintatico {
 					storageToken(RuleType.EXPLO, t);
 					loadEXPNUM();
 				} else {
-					throw new ErroSintaticoException(t.getTokenType());
+					throw new ErroSintaticoException(t);
 				}
 			} else {
-				throw new ErroSintaticoException(t.getTokenType());
+				throw new ErroSintaticoException(t);
 			}
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 
 	}
@@ -418,10 +413,12 @@ public class Sintatico {
 				storageToken(RuleType.FID_1, t);
 				loadEXPNUM();
 			} else {
-				throw new ErroSintaticoException(t.getTokenType());
+				throw new ErroSintaticoException(t);
 			}
+		}else if (follow.isFollowOf(RuleType.FID_1, t.getTokenType())) {
+			storageToken(RuleType.FID_1, t);
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -432,8 +429,10 @@ public class Sintatico {
 			loadEXPLO();
 		} else if ((t.getTokenType() == TokenType.R_PAR) || (t.getTokenType() == TokenType.TERM)) {
 			storageToken(RuleType.FVALLOG, t);
+		}else if (follow.isFollowOf(RuleType.FVALLOG, t.getTokenType())) {
+			storageToken(RuleType.FVALLOG, t);
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -451,10 +450,10 @@ public class Sintatico {
 			if (t.getTokenType() == TokenType.R_PAR) {
 				storageToken(RuleType.EXPNUM, t);
 			} else {
-				throw new ErroSintaticoException(t.getTokenType());
+				throw new ErroSintaticoException(t);
 			}
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -470,8 +469,10 @@ public class Sintatico {
 				|| (t.getTokenType() == TokenType.FOR) || (t.getTokenType() == TokenType.WHILE)
 				|| (t.getTokenType() == TokenType.DECLARE) || (t.getTokenType() == TokenType.TO)) {
 			storageToken(RuleType.XEXPNUM, t);
+		}else if (follow.isFollowOf(RuleType.XEXPNUM, t.getTokenType())) {
+			storageToken(RuleType.XEXPNUM, t);
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -480,7 +481,7 @@ public class Sintatico {
 		if ((t.getTokenType() == TokenType.ARIT_AS) || (t.getTokenType() == TokenType.ARIT_MD)) {
 			storageToken(RuleType.OPNUM, t);
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -490,7 +491,7 @@ public class Sintatico {
 				|| (t.getTokenType() == TokenType.NUM_FLOAT)) {
 			storageToken(RuleType.VAL, t);
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -503,7 +504,7 @@ public class Sintatico {
 			storageToken(RuleType.REP, t);
 			loadREPW();
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -520,13 +521,13 @@ public class Sintatico {
 					loadEXPNUM();
 					loadBLOCO();
 				} else {
-					throw new ErroSintaticoException(t.getTokenType());
+					throw new ErroSintaticoException(t);
 				}
 			} else {
-				throw new ErroSintaticoException(t.getTokenType());
+				throw new ErroSintaticoException(t);
 			}
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
@@ -542,13 +543,13 @@ public class Sintatico {
 					storageToken(RuleType.REPW, t);
 					loadBLOCO();
 				} else {
-					throw new ErroSintaticoException(t.getTokenType());
+					throw new ErroSintaticoException(t);
 				}
 			} else {
-				throw new ErroSintaticoException(t.getTokenType());
+				throw new ErroSintaticoException(t);
 			}
 		} else {
-			throw new ErroSintaticoException(t.getTokenType());
+			throw new ErroSintaticoException(t);
 		}
 	}
 
