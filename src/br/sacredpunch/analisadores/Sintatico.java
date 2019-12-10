@@ -1,3 +1,10 @@
+////////////////////////////////////////////
+// Vinícius De Vietro 191515141		 	  //	
+// Geovanni Peixoto Silva 171151048  	  //
+// Lucas Alves de Medeiros 162150020 	  //
+// Maicon Parra da Silva 1821519513  	  //
+// Lucas Gomes de Melo Bonafé 1921519487  //
+////////////////////////////////////////////
 package br.sacredpunch.analisadores;
 
 import java.io.FileNotFoundException;
